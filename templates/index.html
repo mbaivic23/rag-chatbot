@@ -1,0 +1,802 @@
+<!DOCTYPE html>
+<html lang="hr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ferment</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&family=Lora:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg:          #0d0c09;
+      --surface:     #141310;
+      --surface2:    #1c1b17;
+      --border:      #262420;
+      --amber:       #c49030;
+      --amber-dim:   #7a5a18;
+      --text:        #ddd6c5;
+      --text-dim:    #7a7060;
+      --text-muted:  #3d3a32;
+      --danger-bg:   rgba(140, 50, 30, 0.12);
+      --danger-bdr:  rgba(140, 50, 30, 0.28);
+      --danger-text: #b86040;
+      --radius:      7px;
+      --sans:        'DM Sans', system-ui, sans-serif;
+      --serif:       'Lora', Georgia, serif;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; overflow: hidden; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--sans);
+      display: grid;
+      grid-template-columns: 232px 1fr;
+      height: 100dvh;
+    }
+
+    /* ── Sidebar ──────────────────────────────────────── */
+    .sidebar {
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .sidebar-top {
+      padding: 22px 16px 18px;
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+    }
+
+    .logo-mark {
+      width: 20px;
+      height: 20px;
+      background: var(--amber);
+      border-radius: 4px;
+      flex-shrink: 0;
+    }
+
+    .logo-name {
+      font-family: var(--serif);
+      font-size: 1.1rem;
+      font-weight: 500;
+      color: var(--text);
+      letter-spacing: -0.01em;
+      line-height: 1;
+    }
+
+    .logo-sub {
+      display: block;
+      font-family: var(--sans);
+      font-size: 0.6rem;
+      font-weight: 300;
+      color: var(--text-muted);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      margin-top: 3px;
+    }
+
+    .sidebar-nav {
+      flex: 1;
+      padding: 14px 10px;
+      overflow-y: auto;
+    }
+
+    .nav-label {
+      font-size: 0.58rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--text-muted);
+      padding: 0 6px;
+      margin-bottom: 5px;
+    }
+
+    .nav-btn {
+      display: block;
+      width: 100%;
+      text-align: left;
+      background: none;
+      border: none;
+      border-radius: 5px;
+      padding: 7px 10px;
+      font-family: var(--sans);
+      font-size: 0.8rem;
+      font-weight: 400;
+      color: var(--text-dim);
+      cursor: pointer;
+      transition: background 0.12s, color 0.12s;
+      margin-bottom: 1px;
+    }
+
+    .nav-btn:hover {
+      background: var(--surface2);
+      color: var(--text);
+    }
+
+    .sidebar-footer {
+      padding: 12px 16px 16px;
+      border-top: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+
+    .model-row {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+
+    .status-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #4a7a4a;
+      flex-shrink: 0;
+    }
+
+    .model-label {
+      font-size: 0.68rem;
+      color: var(--text-muted);
+      line-height: 1;
+    }
+
+    .model-name {
+      display: block;
+      font-size: 0.78rem;
+      font-weight: 500;
+      color: var(--text-dim);
+      margin-top: 1px;
+    }
+
+    .disclaimer {
+      margin-top: 10px;
+      font-size: 0.62rem;
+      color: var(--text-muted);
+      line-height: 1.55;
+    }
+
+    /* ── Main ─────────────────────────────────────────── */
+    .main {
+      display: flex;
+      flex-direction: column;
+      height: 100dvh;
+      overflow: hidden;
+    }
+
+    .chat-header {
+      padding: 12px 24px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-shrink: 0;
+    }
+
+    .chat-title {
+      font-size: 0.75rem;
+      font-weight: 400;
+      color: var(--text-muted);
+      letter-spacing: 0.03em;
+    }
+
+    .clear-btn {
+      background: none;
+      border: 1px solid var(--border);
+      border-radius: 5px;
+      padding: 4px 11px;
+      font-family: var(--sans);
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: border-color 0.12s, color 0.12s;
+    }
+
+    .clear-btn:hover {
+      border-color: var(--amber-dim);
+      color: var(--text-dim);
+    }
+
+    /* ── Messages ─────────────────────────────────────── */
+    #messages {
+      flex: 1;
+      overflow-y: auto;
+      padding: 28px 28px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    #messages::-webkit-scrollbar { width: 3px; }
+    #messages::-webkit-scrollbar-track { background: transparent; }
+    #messages::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+    .msg {
+      display: flex;
+      flex-direction: column;
+      max-width: 700px;
+      animation: fade-up 0.16s ease;
+    }
+
+    @keyframes fade-up {
+      from { opacity: 0; transform: translateY(5px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .msg.user { align-self: flex-end;   align-items: flex-end; }
+    .msg.bot  { align-self: flex-start; align-items: flex-start; }
+
+    .msg-label {
+      font-size: 0.58rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-muted);
+      margin-bottom: 4px;
+    }
+
+    .bubble {
+      font-size: 0.875rem;
+      line-height: 1.72;
+      word-break: break-word;
+    }
+
+    .msg.user .bubble {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 10px 15px;
+      color: var(--text);
+    }
+
+    .msg.bot .bubble {
+      color: var(--text);
+      padding: 2px 0;
+    }
+
+    /* Markdown in bot bubbles */
+    .bubble p          { margin-bottom: 0.5em; }
+    .bubble p:last-child { margin-bottom: 0; }
+    .bubble strong     { font-weight: 500; }
+    .bubble em         { font-style: italic; }
+    .bubble code {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      padding: 1px 5px;
+      border-radius: 3px;
+      font-size: 0.82em;
+      font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
+    }
+    .bubble ol,
+    .bubble ul { padding-left: 1.3em; margin: 0.4em 0; }
+    .bubble li { margin-bottom: 0.2em; }
+
+    /* Streaming cursor */
+    .cursor {
+      display: inline-block;
+      width: 2px;
+      height: 0.9em;
+      background: var(--amber);
+      margin-left: 1px;
+      vertical-align: text-bottom;
+      animation: blink 1s step-end infinite;
+    }
+
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50%       { opacity: 0; }
+    }
+
+    /* Sources */
+    .sources { margin-top: 10px; }
+
+    .sources-toggle {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      background: none;
+      border: none;
+      padding: 0;
+      font-family: var(--sans);
+      font-size: 0.65rem;
+      color: var(--text-muted);
+      cursor: pointer;
+      letter-spacing: 0.03em;
+      transition: color 0.12s;
+    }
+
+    .sources-toggle:hover { color: var(--text-dim); }
+
+    .sources-arrow {
+      display: inline-block;
+      font-size: 0.55rem;
+      transition: transform 0.15s;
+    }
+
+    .sources-toggle.open .sources-arrow { transform: rotate(90deg); }
+
+    .sources-list {
+      display: none;
+      margin-top: 8px;
+      border-left: 1px solid var(--border);
+      padding-left: 12px;
+    }
+
+    .sources-list.open { display: block; }
+
+    .source-item {
+      padding: 7px 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .source-item:last-child { border-bottom: none; padding-bottom: 0; }
+
+    .source-head {
+      display: flex;
+      align-items: baseline;
+      gap: 6px;
+    }
+
+    .source-title  { font-size: 0.75rem; font-weight: 500; color: var(--text-dim); }
+    .source-score  { font-size: 0.62rem; color: var(--text-muted); }
+    .source-tags   { font-size: 0.62rem; color: var(--text-muted); margin-top: 1px; }
+
+    .source-excerpt {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+      margin-top: 4px;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    /* Error */
+    .error-bubble {
+      background: var(--danger-bg);
+      border: 1px solid var(--danger-bdr);
+      border-radius: var(--radius);
+      padding: 10px 14px;
+      font-size: 0.82rem;
+      color: var(--danger-text);
+    }
+
+    /* Welcome */
+    .welcome {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      gap: 8px;
+      padding-bottom: 40px;
+    }
+
+    .welcome-title {
+      font-family: var(--serif);
+      font-size: 1.5rem;
+      font-weight: 400;
+      color: var(--text-dim);
+    }
+
+    .welcome-desc {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      max-width: 360px;
+      line-height: 1.65;
+    }
+
+    /* ── Input ────────────────────────────────────────── */
+    .input-area {
+      padding: 12px 28px 18px;
+      border-top: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+
+    .input-row {
+      display: flex;
+      gap: 8px;
+      align-items: flex-end;
+    }
+
+    #user-input {
+      flex: 1;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 10px 14px;
+      font-family: var(--sans);
+      font-size: 0.875rem;
+      color: var(--text);
+      resize: none;
+      height: 42px;
+      max-height: 130px;
+      line-height: 1.4;
+      overflow: hidden;
+      transition: border-color 0.12s;
+    }
+
+    #user-input::placeholder { color: var(--text-muted); }
+    #user-input:focus { outline: none; border-color: var(--amber-dim); }
+
+    #send-btn {
+      width: 42px;
+      height: 42px;
+      background: var(--amber);
+      border: none;
+      border-radius: var(--radius);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      color: var(--bg);
+      transition: background 0.12s, opacity 0.12s;
+    }
+
+    #send-btn:hover   { background: #b07e26; }
+    #send-btn:active  { background: #9a6e1e; }
+    #send-btn:disabled { opacity: 0.28; cursor: not-allowed; }
+
+    .input-hint {
+      margin-top: 6px;
+      font-size: 0.6rem;
+      color: var(--text-muted);
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+<aside class="sidebar">
+  <div class="sidebar-top">
+    <div class="logo">
+      <div class="logo-mark"></div>
+      <div>
+        <span class="logo-name">Ferment</span>
+        <span class="logo-sub">Kucna fermentacija</span>
+      </div>
+    </div>
+  </div>
+
+  <nav class="sidebar-nav">
+    <p class="nav-label">Brzi poceta</p>
+    <button class="nav-btn" onclick="quickAsk('Kako napraviti kiseli kupus kod kuce?')">Kiseli kupus</button>
+    <button class="nav-btn" onclick="quickAsk('Kako se pravi kimchi za pocetnike?')">Kimchi</button>
+    <button class="nav-btn" onclick="quickAsk('Kako pripremiti kefir i sto mi treba?')">Kefir</button>
+    <button class="nav-btn" onclick="quickAsk('Upute za pravljenje kombuche korak po korak')">Kombucha</button>
+    <button class="nav-btn" onclick="quickAsk('Kako pokrenuti i odrzavati starter za kiselo tijesto?')">Kiselo tijesto</button>
+    <button class="nav-btn" onclick="quickAsk('Koja mi oprema treba za kucnu fermentaciju?')">Oprema i higijena</button>
+    <button class="nav-btn" onclick="quickAsk('Kako prepoznati kvarenje fermentiranog proizvoda?')">Sigurnost i kvarenje</button>
+  </nav>
+
+  <div class="sidebar-footer">
+    <div class="model-row">
+      <div class="status-dot"></div>
+      <div>
+        <span class="model-label">Ollama</span>
+        <span class="model-name">{{ model }}</span>
+      </div>
+    </div>
+    <p class="disclaimer">
+      Chatbot ne zamjenjuje strucni savjet. Za medicinska pitanja obratite se lijecniku.
+    </p>
+  </div>
+</aside>
+
+<main class="main">
+  <header class="chat-header">
+    <span class="chat-title">Razgovor</span>
+    <button class="clear-btn" onclick="clearChat()">Novi razgovor</button>
+  </header>
+
+  <div id="messages">
+    <div class="welcome" id="welcome">
+      <h1 class="welcome-title">Ferment</h1>
+      <p class="welcome-desc">Pitajte me o kucnoj fermentaciji &mdash; kiseli kupus, kimchi, kefir, kombucha ili kiselo tijesto.</p>
+    </div>
+  </div>
+
+  <div class="input-area">
+    <div class="input-row">
+      <textarea
+        id="user-input"
+        placeholder="Postavite pitanje o fermentaciji..."
+        rows="1"
+        onkeydown="handleKey(event)"
+        oninput="autoResize(this)"
+      ></textarea>
+      <button id="send-btn" onclick="sendMessage()" title="Posalji">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2.5"
+             stroke-linecap="round" stroke-linejoin="round">
+          <line x1="22" y1="2" x2="11" y2="13"></line>
+          <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+        </svg>
+      </button>
+    </div>
+    <p class="input-hint">Enter za slanje &middot; Shift+Enter za novi red</p>
+  </div>
+</main>
+
+<script>
+  let history   = [];
+  let isLoading = false;
+
+  // ── Helpers ───────────────────────────────────────────────────────────
+
+  function autoResize(el) {
+    el.style.height = '42px';
+    el.style.height = Math.min(el.scrollHeight, 130) + 'px';
+  }
+
+  function handleKey(e) {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      sendMessage();
+    }
+  }
+
+  function quickAsk(text) {
+    document.getElementById('user-input').value = text;
+    sendMessage();
+  }
+
+  function clearChat() {
+    history = [];
+    document.getElementById('messages').innerHTML = `
+      <div class="welcome" id="welcome">
+        <h1 class="welcome-title">Ferment</h1>
+        <p class="welcome-desc">Pitajte me o kucnoj fermentaciji &mdash; kiseli kupus, kimchi, kefir, kombucha ili kiselo tijesto.</p>
+      </div>`;
+  }
+
+  function scrollBottom() {
+    const m = document.getElementById('messages');
+    m.scrollTop = m.scrollHeight;
+  }
+
+  // ── Markdown renderer ─────────────────────────────────────────────────
+
+  function renderMarkdown(raw) {
+    let t = raw
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+      .replace(/\*(.+?)\*/g,     '<em>$1</em>')
+      .replace(/`([^`\n]+)`/g,   '<code>$1</code>');
+
+    const lines   = t.split('\n');
+    const out     = [];
+    let listType  = null;
+
+    const closeList = () => {
+      if (listType) { out.push(`</${listType}>`); listType = null; }
+    };
+
+    for (const line of lines) {
+      const num    = line.match(/^(\d+)\.\s+(.+)/);
+      const bullet = line.match(/^[-*]\s+(.+)/);
+
+      if (num) {
+        if (listType !== 'ol') { closeList(); out.push('<ol>'); listType = 'ol'; }
+        out.push(`<li>${num[2]}</li>`);
+      } else if (bullet) {
+        if (listType !== 'ul') { closeList(); out.push('<ul>'); listType = 'ul'; }
+        out.push(`<li>${bullet[1]}</li>`);
+      } else if (line.trim() === '') {
+        closeList();
+      } else {
+        closeList();
+        out.push(`<p>${line}</p>`);
+      }
+    }
+
+    closeList();
+    return out.join('');
+  }
+
+  // ── DOM builders ──────────────────────────────────────────────────────
+
+  function removeWelcome() {
+    const w = document.getElementById('welcome');
+    if (w) w.remove();
+  }
+
+  function appendUserMsg(text) {
+    removeWelcome();
+    const msgs  = document.getElementById('messages');
+    const wrap  = document.createElement('div');
+    wrap.className = 'msg user';
+
+    const label = document.createElement('div');
+    label.className = 'msg-label';
+    label.textContent = 'Vi';
+    wrap.appendChild(label);
+
+    const bubble = document.createElement('div');
+    bubble.className = 'bubble';
+    bubble.textContent = text;
+    wrap.appendChild(bubble);
+
+    msgs.appendChild(wrap);
+    scrollBottom();
+  }
+
+  function createBotBubble() {
+    removeWelcome();
+    const msgs  = document.getElementById('messages');
+    const wrap  = document.createElement('div');
+    wrap.className = 'msg bot';
+
+    const label = document.createElement('div');
+    label.className = 'msg-label';
+    label.textContent = 'Ferment';
+    wrap.appendChild(label);
+
+    const bubble = document.createElement('div');
+    bubble.className = 'bubble';
+
+    const cursor = document.createElement('span');
+    cursor.className = 'cursor';
+    bubble.appendChild(cursor);
+    wrap.appendChild(bubble);
+
+    msgs.appendChild(wrap);
+    scrollBottom();
+    return { wrap, bubble, cursor };
+  }
+
+  function buildSources(chunks) {
+    const root   = document.createElement('div');
+    root.className = 'sources';
+
+    const toggle = document.createElement('button');
+    toggle.className = 'sources-toggle';
+    toggle.innerHTML =
+      `<span class="sources-arrow">&#9658;</span> ` +
+      `${chunks.length} izvor${chunks.length > 1 ? 'a' : ''}`;
+    root.appendChild(toggle);
+
+    const list = document.createElement('div');
+    list.className = 'sources-list';
+
+    chunks.forEach(c => {
+      const item = document.createElement('div');
+      item.className = 'source-item';
+
+      const head = document.createElement('div');
+      head.className = 'source-head';
+      head.innerHTML =
+        `<span class="source-title">${c.title || c.filename}</span>` +
+        `<span class="source-score">${c.score}</span>`;
+      item.appendChild(head);
+
+      if (c.tags) {
+        const tags = document.createElement('div');
+        tags.className = 'source-tags';
+        tags.textContent = c.tags;
+        item.appendChild(tags);
+      }
+
+      const excerpt = document.createElement('div');
+      excerpt.className = 'source-excerpt';
+      excerpt.textContent = c.text;
+      item.appendChild(excerpt);
+
+      list.appendChild(item);
+    });
+
+    toggle.addEventListener('click', () => {
+      toggle.classList.toggle('open');
+      list.classList.toggle('open');
+    });
+
+    root.appendChild(list);
+    return root;
+  }
+
+  function showError(wrap, bubble, cursor, msg) {
+    cursor.remove();
+    bubble.className = 'error-bubble';
+    bubble.textContent = msg;
+  }
+
+  // ── Send ──────────────────────────────────────────────────────────────
+
+  async function sendMessage() {
+    if (isLoading) return;
+
+    const input = document.getElementById('user-input');
+    const text  = input.value.trim();
+    if (!text) return;
+
+    input.value = '';
+    input.style.height = '42px';
+
+    appendUserMsg(text);
+    isLoading = true;
+    document.getElementById('send-btn').disabled = true;
+
+    const { wrap, bubble, cursor } = createBotBubble();
+    let rawText = '';
+    let chunks  = [];
+
+    try {
+      const res = await fetch('/chat/stream', {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body:    JSON.stringify({ message: text, history }),
+      });
+
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        showError(wrap, bubble, cursor, err.error || 'Greška na serveru.');
+        return;
+      }
+
+      const reader  = res.body.getReader();
+      const decoder = new TextDecoder();
+      let   buffer  = '';
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+
+        buffer += decoder.decode(value, { stream: true });
+        const lines = buffer.split('\n');
+        buffer = lines.pop();
+
+        for (const line of lines) {
+          if (!line.startsWith('data: ')) continue;
+          let evt;
+          try { evt = JSON.parse(line.slice(6)); } catch { continue; }
+
+          if (evt.type === 'chunks') {
+            chunks = evt.chunks;
+
+          } else if (evt.type === 'token') {
+            rawText += evt.token;
+            bubble.textContent = rawText;
+            bubble.appendChild(cursor);
+            scrollBottom();
+
+          } else if (evt.type === 'done') {
+            cursor.remove();
+            bubble.innerHTML = renderMarkdown(rawText);
+            if (chunks.length > 0) wrap.appendChild(buildSources(chunks));
+            history.push({ role: 'user',      content: text });
+            history.push({ role: 'assistant', content: rawText });
+            if (history.length > 20) history = history.slice(-20);
+            scrollBottom();
+
+          } else if (evt.type === 'error') {
+            showError(wrap, bubble, cursor, evt.error);
+          }
+        }
+      }
+
+    } catch (e) {
+      showError(wrap, bubble, cursor, 'Greška pri spajanju na server: ' + e.message);
+    } finally {
+      if (bubble.contains(cursor)) {
+        cursor.remove();
+        if (rawText) bubble.innerHTML = renderMarkdown(rawText);
+      }
+      isLoading = false;
+      document.getElementById('send-btn').disabled = false;
+    }
+  }
+</script>
+</body>
+</html>
