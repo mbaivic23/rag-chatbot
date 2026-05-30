@@ -72,7 +72,7 @@ def build_prompt(query: str, chunks: list[dict], history: list[dict]) -> list[di
             "vezana uz kućnu fermentaciju: kiseli kupus, kimchi, kefir, kombucha "
             "i kiselo tijesto. "
             "Pitanja izvan te domene odbij kratkom rečenicom, npr. "
-            "'To pitanje nije vezano uz fermentaciju.' — bez objašnjavanja, "
+            "'To pitanje nije vezano uz fermentaciju.' - bez objašnjavanja, "
             "izvlačenja, niti usmjeravanja na druge izvore. "
             "Nikad ne daješ medicinske savjete ni dijagnoze. "
             "Ako postoji opasnost po zdravlje (obojena plijesan, truli miris), "

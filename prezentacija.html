@@ -161,7 +161,7 @@ tr:last-child td { border-bottom: none; }
 /* ── LIST ── */
 ul.plain { list-style: none; padding: 0; display: flex; flex-direction: column; gap: 0.5rem; }
 ul.plain li { display: flex; gap: 0.75rem; }
-ul.plain li::before { content: '—'; color: var(--fg3); flex-shrink: 0; }
+ul.plain li::before { content: '-'; color: var(--fg3); flex-shrink: 0; }
 
 /* ── PIPELINE ── */
 .pipeline { display: flex; flex-direction: column; gap: 0; }
@@ -286,15 +286,15 @@ ul.plain li::before { content: '—'; color: var(--fg3); flex-shrink: 0; }
 
 <!-- ── 01 NASLOVNICA ── -->
 <section class="slide" id="s0">
-  <div class="label r">FOI Varaždin — 2026</div>
+  <div class="label r">FOI Varaždin - 2026</div>
   <h1 class="r">Chatbot za<br>kućnu<br><span class="ac">fermentaciju</span></h1>
   <hr class="r">
   <p class="r" style="max-width:38ch;">
-    Lokalni RAG sustav za odgovaranje na pitanja o fermentaciji — bez cloud servisa, bez API ključeva, na hrvatskom jeziku.
+    Lokalni RAG sustav za odgovaranje na pitanja o fermentaciji - bez cloud servisa, bez API ključeva, na hrvatskom jeziku.
   </p>
   <div class="r" style="margin-top: clamp(1.5rem, 3vw, 2rem); display:flex; gap:0.75rem; flex-wrap:wrap;">
-    <span class="tag">Faza 1 — Planiranje</span>
-    <span class="tag green">Faza 2 — RAG implementacija</span>
+    <span class="tag">Faza 1 - Planiranje</span>
+    <span class="tag green">Faza 2 - RAG implementacija</span>
   </div>
   <div class="r" style="margin-top: clamp(2rem, 4vw, 3.5rem);">
     <p style="color: var(--fg3); font-size: clamp(0.65rem, 1vw, 0.75rem); letter-spacing: 0.08em;">
@@ -315,7 +315,7 @@ ul.plain li::before { content: '—'; color: var(--fg3); flex-shrink: 0; }
     </div>
     <div>
       <h3>Arhitektura</h3>
-      <p>RAG — model odgovara samo temeljem verificiranog sadržaja iz baze dokumenata. Nema halucinacija.</p>
+      <p>RAG - model odgovara samo temeljem verificiranog sadržaja iz baze dokumenata. Nema halucinacija.</p>
     </div>
     <div>
       <h3>Lokalno</h3>
@@ -342,7 +342,7 @@ ul.plain li::before { content: '—'; color: var(--fg3); flex-shrink: 0; }
 
 <!-- ── 04 FAZA 1: domena ── -->
 <section class="slide" id="s3">
-  <div class="label r">Faza 1 — Domena</div>
+  <div class="label r">Faza 1 - Domena</div>
   <h2 class="r">Korisnici i pravila</h2>
   <hr class="r">
   <div class="cols cols-21 r" style="margin-top: clamp(1.5rem, 3vw, 2rem);">
@@ -370,7 +370,7 @@ ul.plain li::before { content: '—'; color: var(--fg3); flex-shrink: 0; }
 
 <!-- ── 05 FAZA 1: baza znanja ── -->
 <section class="slide" id="s4">
-  <div class="label r">Faza 1 — Znanjska baza</div>
+  <div class="label r">Faza 1 - Znanjska baza</div>
   <h2 class="r">Područja fermentacije</h2>
   <hr class="r">
   <div class="cols cols-2 r" style="margin-top: clamp(1.5rem, 3vw, 2rem);">
@@ -378,8 +378,8 @@ ul.plain li::before { content: '—'; color: var(--fg3); flex-shrink: 0; }
       <table>
         <thead><tr><th>Tema</th><th>Opis</th></tr></thead>
         <tbody>
-          <tr><td>Fermentacija povrća</td><td>Kiseli kupus, kimchi — lakto-fermentacija, pH kontrola</td></tr>
-          <tr><td>Mliječna fermentacija</td><td>Kefir, jogurt — bakterijske kulture, temperatura</td></tr>
+          <tr><td>Fermentacija povrća</td><td>Kiseli kupus, kimchi - lakto-fermentacija, pH kontrola</td></tr>
+          <tr><td>Mliječna fermentacija</td><td>Kefir, jogurt - bakterijske kulture, temperatura</td></tr>
           <tr><td>Kombucha</td><td>SCOBY kultura, fermentacija čaja, sigurnost</td></tr>
           <tr><td>Kiselo tijesto</td><td>Starter kultura, hidratacija, pečenje</td></tr>
           <tr><td>Oprema i higijena</td><td>Posude, alati, sterilizacija</td></tr>
@@ -402,7 +402,7 @@ ul.plain li::before { content: '—'; color: var(--fg3); flex-shrink: 0; }
     <div class="ph-line"></div>
   </div>
   <h2 class="r" style="font-size: clamp(3rem, 8vw, 7rem); font-weight:200; letter-spacing:-0.04em;">Faza 2</h2>
-  <p class="r" style="margin-top:0.75rem; font-size: clamp(1rem, 2.5vw, 1.5rem); color:var(--fg2);">RAG pipeline — lokalna implementacija</p>
+  <p class="r" style="margin-top:0.75rem; font-size: clamp(1rem, 2.5vw, 1.5rem); color:var(--fg2);">RAG pipeline - lokalna implementacija</p>
   <hr class="r">
   <div class="cols cols-3 r" style="margin-top: clamp(1rem, 2vw, 1.5rem);">
     <p>Ingestion: chunking i vektorizacija dokumenata</p>
@@ -413,7 +413,7 @@ ul.plain li::before { content: '—'; color: var(--fg3); flex-shrink: 0; }
 
 <!-- ── 07 TEHNIČKI STACK ── -->
 <section class="slide" id="s6">
-  <div class="label r">Faza 2 — Tehnologija</div>
+  <div class="label r">Faza 2 - Tehnologija</div>
   <h2 class="r">Tehnički stack</h2>
   <hr class="r">
   <div class="cols cols-2 r" style="margin-top: clamp(1.5rem, 3vw, 2rem);">
@@ -422,10 +422,10 @@ ul.plain li::before { content: '—'; color: var(--fg3); flex-shrink: 0; }
       <tbody>
         <tr><td>Lokalni LLM</td><td>Ollama + OpenEuroLLM-Croatian</td></tr>
         <tr><td>Embeddings</td><td>paraphrase-multilingual-MiniLM-L12-v2</td></tr>
-        <tr><td>Vektorska baza</td><td>ChromaDB — lokalna, perzistentna</td></tr>
-        <tr><td>Backend</td><td>Flask 3.0 — port 3000</td></tr>
+        <tr><td>Vektorska baza</td><td>ChromaDB - lokalna, perzistentna</td></tr>
+        <tr><td>Backend</td><td>Flask 3.0</td></tr>
         <tr><td>Frontend</td><td>HTML / CSS / JavaScript</td></tr>
-        <tr><td>Chunking</td><td>Markdown naslovi — ~600 znakova, 80 overlap</td></tr>
+        <tr><td>Chunking</td><td>Markdown naslovi - ~600 znakova, 80 overlap</td></tr>
       </tbody>
     </table>
     <div>
@@ -437,7 +437,7 @@ ul.plain li::before { content: '—'; color: var(--fg3); flex-shrink: 0; }
       </ul>
       <h3 style="margin-bottom:0.75rem;">Zašto MiniLM-L12-v2?</h3>
       <ul class="plain">
-        <li>Višejezičan model — dobro radi s hrvatskim</li>
+        <li>Višejezičan model - dobro radi s hrvatskim</li>
         <li>Mali i brz za lokalni rad</li>
         <li>Isti model u ingest-u i retrieval-u</li>
       </ul>
@@ -447,28 +447,28 @@ ul.plain li::before { content: '—'; color: var(--fg3); flex-shrink: 0; }
 
 <!-- ── 08 RAG PIPELINE ── -->
 <section class="slide" id="s7">
-  <div class="label r">Faza 2 — Arhitektura</div>
+  <div class="label r">Faza 2 - Arhitektura</div>
   <h2 class="r">RAG pipeline</h2>
   <hr class="r">
   <div class="cols cols-2 r" style="margin-top: clamp(1.5rem, 3vw, 2rem);">
     <div>
-      <p style="font-size:0.65rem; letter-spacing:0.12em; text-transform:uppercase; color:var(--fg3); margin-bottom:0.5rem;">Priprema — ingest.py</p>
+      <p style="font-size:0.65rem; letter-spacing:0.12em; text-transform:uppercase; color:var(--fg3); margin-bottom:0.5rem;">Priprema - ingest.py</p>
       <div class="pipeline">
         <div class="pipe-row"><span class="pipe-n">1</span><span class="pipe-text">Učitaj MD datoteke iz <span class="em">/docs/</span></span></div>
         <div class="pipe-row"><span class="pipe-n">2</span><span class="pipe-text">Parsiraj YAML frontmatter (title, tags, tip)</span></div>
         <div class="pipe-row"><span class="pipe-n">3</span><span class="pipe-text">Split teksta po Markdown naslovima</span></div>
-        <div class="pipe-row"><span class="pipe-n">4</span><span class="pipe-text">Vektorizacija — SentenceTransformer</span></div>
+        <div class="pipe-row"><span class="pipe-n">4</span><span class="pipe-text">Vektorizacija - SentenceTransformer</span></div>
         <div class="pipe-row"><span class="pipe-n">5</span><span class="pipe-text">Pohrana u <span class="em">ChromaDB</span> s metapodacima</span></div>
       </div>
     </div>
     <div>
-      <p style="font-size:0.65rem; letter-spacing:0.12em; text-transform:uppercase; color:var(--fg3); margin-bottom:0.5rem;">Upit korisnika — app.py</p>
+      <p style="font-size:0.65rem; letter-spacing:0.12em; text-transform:uppercase; color:var(--fg3); margin-bottom:0.5rem;">Upit korisnika - app.py</p>
       <div class="pipeline">
         <div class="pipe-row"><span class="pipe-n">6</span><span class="pipe-text">Korisnik pošalje pitanje iz browsera</span></div>
-        <div class="pipe-row"><span class="pipe-n">7</span><span class="pipe-text">Embedding upita — isti model kao ingest</span></div>
-        <div class="pipe-row"><span class="pipe-n">8</span><span class="pipe-text">ChromaDB similarity search — <span class="em">top-4 chunkova</span></span></div>
+        <div class="pipe-row"><span class="pipe-n">7</span><span class="pipe-text">Embedding upita - isti model kao ingest</span></div>
+        <div class="pipe-row"><span class="pipe-n">8</span><span class="pipe-text">ChromaDB similarity search - <span class="em">top-4 chunkova</span></span></div>
         <div class="pipe-row"><span class="pipe-n">9</span><span class="pipe-text">Prompt = sistemske upute + kontekst + upit</span></div>
-        <div class="pipe-row"><span class="pipe-n">10</span><span class="pipe-text">Ollama generira odgovor — Flask vraća + izvore</span></div>
+        <div class="pipe-row"><span class="pipe-n">10</span><span class="pipe-text">Ollama generira odgovor - Flask vraća + izvore</span></div>
       </div>
     </div>
   </div>
@@ -476,20 +476,20 @@ ul.plain li::before { content: '—'; color: var(--fg3); flex-shrink: 0; }
 
 <!-- ── 09 API ── -->
 <section class="slide" id="s8">
-  <div class="label r">Faza 2 — API</div>
+  <div class="label r">Faza 2 - API</div>
   <h2 class="r">Endpointi</h2>
   <hr class="r">
   <div class="r" style="margin-top: clamp(1.5rem, 3vw, 2rem); max-width: 680px;">
     <div class="ep"><span class="method">POST</span><span class="ep-path">/chat</span><span class="ep-desc">Odgovor LLM-a i relevantni izvori za dano pitanje</span></div>
     <div class="ep"><span class="method">POST</span><span class="ep-path">/chat/stream</span><span class="ep-desc">Streaming odgovor token-po-token za real-time prikaz</span></div>
-    <div class="ep"><span class="method">POST</span><span class="ep-path">/retrieve</span><span class="ep-desc">Debug mod — samo retrieval, bez poziva LLM-a</span></div>
+    <div class="ep"><span class="method">POST</span><span class="ep-path">/retrieve</span><span class="ep-desc">Debug mod - samo retrieval, bez poziva LLM-a</span></div>
     <div class="ep"><span class="method">GET</span><span class="ep-path">/health</span><span class="ep-desc">Status servisa i ChromaDB konekcije</span></div>
   </div>
 </section>
 
 <!-- ── 10 ZAŠTO LOKALNO ── -->
 <section class="slide" id="s9">
-  <div class="label r">Faza 2 — Obrazloženje</div>
+  <div class="label r">Faza 2 - Obrazloženje</div>
   <h2 class="r">Zašto potpuno lokalno?</h2>
   <hr class="r">
   <div class="cols cols-2 r" style="margin-top: clamp(1.5rem, 3vw, 2rem);">
@@ -501,7 +501,7 @@ ul.plain li::before { content: '—'; color: var(--fg3); flex-shrink: 0; }
     </div>
     <div>
       <h3>Dostupnost</h3>
-      <p style="margin-bottom:1.5rem;">Radi bez internetske veze. Jednom postavljeno, uvijek dostupno — nema ovisnosti o cloud servisu.</p>
+      <p style="margin-bottom:1.5rem;">Radi bez internetske veze. Jednom postavljeno, uvijek dostupno - nema ovisnosti o cloud servisu.</p>
       <h3>Transparentnost</h3>
       <p>Sve komponente su vidljive i izmjenjive. Savršeno za demonstraciju i razumijevanje RAG arhitekture.</p>
     </div>
@@ -526,7 +526,7 @@ ul.plain li::before { content: '—'; color: var(--fg3); flex-shrink: 0; }
     </div>
     <div>
       <p class="em" style="margin-bottom:0.3rem;">Faza 2A</p>
-      <p>Izgradnja znanjske baze — 12 datoteka pokrivaju sve domene fermentacije</p>
+      <p>Izgradnja znanjske baze - 12 datoteka pokrivaju sve domene fermentacije</p>
     </div>
     <div>
       <p class="em" style="margin-bottom:0.3rem;">Faza 2B</p>
@@ -541,7 +541,7 @@ ul.plain li::before { content: '—'; color: var(--fg3); flex-shrink: 0; }
   <h2 class="r" style="font-size: clamp(3rem, 8vw, 7rem); font-weight:200; letter-spacing:-0.04em;">Pitanja?</h2>
   <hr class="r">
   <p class="r" style="max-width:42ch; margin-top:0.5rem;">
-    Chatbot za kućnu fermentaciju — lokalni RAG sustav izgrađen s Ollama, ChromaDB i Flask-om.
+    Chatbot za kućnu fermentaciju - lokalni RAG sustav izgrađen s Ollama, ChromaDB i Flask-om.
   </p>
   <div class="r" style="margin-top: clamp(2rem, 4vw, 3.5rem);">
     <p style="color: var(--fg3); font-size: clamp(0.65rem, 1vw, 0.75rem); letter-spacing: 0.08em; margin-bottom:0.4rem;">

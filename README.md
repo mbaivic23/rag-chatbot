@@ -168,7 +168,7 @@ Otvori browser: **http://localhost:3000**
 [3] 10_primjeri_pitanja_i_odgovora.md  (sličnost: 0.823)
     Tags: pitanja, odgovori, interakcije
     "Na površini kombuche pojavile su mi se crne mrlje i miris je jako
-    neugodan. Je li to normalno? — Crne mrlje i prodoran neugodan miris
+    neugodan. Je li to normalno? - Crne mrlje i prodoran neugodan miris
     mogu upućivati na kontaminaciju..."
 ```
 
