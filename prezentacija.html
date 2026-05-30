@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="hr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chatbot za kućnu fermentaciju</title>
+<style>
+:root {
+  --bg:      #0c0c0c;
+  --bg2:     #111111;
+  --fg:      #e8e8e8;
+  --fg2:     #666;
+  --fg3:     #333;
+  --accent:  #d4f5a0;
+  --line:    #222;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { font-size: 16px; }
+
+body {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  overflow: hidden;
+  line-height: 1.4;
+}
+
+/* ── SLIDES ── */
+.slide {
+  position: absolute;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: clamp(2rem, 6vw, 6rem);
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity 0.4s ease, transform 0.4s ease;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.slide.active {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: all;
+}
+
+/* ── TYPOGRAPHY ── */
+.label {
+  font-size: clamp(0.6rem, 1vw, 0.7rem);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--fg2);
+  margin-bottom: clamp(1.5rem, 3vw, 2.5rem);
+}
+
+h1 {
+  font-size: clamp(2.8rem, 7vw, 6rem);
+  font-weight: 300;
+  letter-spacing: -0.03em;
+  line-height: 1.0;
+  color: var(--fg);
+}
+
+h2 {
+  font-size: clamp(1.8rem, 4.5vw, 3.5rem);
+  font-weight: 300;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+  color: var(--fg);
+}
+
+h3 {
+  font-size: clamp(0.75rem, 1.5vw, 0.95rem);
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  color: var(--fg);
+  margin-bottom: 0.4em;
+}
+
+p, li {
+  font-size: clamp(0.78rem, 1.5vw, 0.95rem);
+  color: var(--fg2);
+  line-height: 1.65;
+}
+
+.em { color: var(--fg); }
+.ac { color: var(--accent); }
+
+/* ── REVEAL ── */
+.r {
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+.r.on { opacity: 1; transform: none; }
+.r:nth-child(1) { transition-delay: 0.05s; }
+.r:nth-child(2) { transition-delay: 0.12s; }
+.r:nth-child(3) { transition-delay: 0.19s; }
+.r:nth-child(4) { transition-delay: 0.26s; }
+.r:nth-child(5) { transition-delay: 0.33s; }
+.r:nth-child(6) { transition-delay: 0.40s; }
+.r:nth-child(7) { transition-delay: 0.47s; }
+.r:nth-child(8) { transition-delay: 0.54s; }
+
+@media (prefers-reduced-motion: reduce) {
+  .r { opacity: 1; transform: none; transition: none; }
+}
+
+/* ── LAYOUT ── */
+.cols {
+  display: grid;
+  gap: clamp(2rem, 4vw, 5rem);
+}
+.cols-2  { grid-template-columns: 1fr 1fr; }
+.cols-3  { grid-template-columns: 1fr 1fr 1fr; }
+.cols-21 { grid-template-columns: 2fr 1fr; }
+
+@media (max-width: 680px) {
+  .cols-2, .cols-3, .cols-21 { grid-template-columns: 1fr; }
+}
+
+/* ── HR ── */
+hr {
+  border: none;
+  border-top: 1px solid var(--line);
+  margin: clamp(1rem, 2vw, 1.75rem) 0;
+}
+
+/* ── TABLE ── */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: clamp(0.7rem, 1.3vw, 0.85rem);
+}
+th {
+  text-align: left;
+  padding: 0.4rem 0;
+  font-size: clamp(0.58rem, 0.9vw, 0.68rem);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--fg3);
+  border-bottom: 1px solid var(--line);
+  font-weight: 400;
+}
+td {
+  padding: 0.55rem 0;
+  border-bottom: 1px solid var(--line);
+  color: var(--fg2);
+  vertical-align: top;
+}
+td:first-child { color: var(--fg); padding-right: 1.5rem; white-space: nowrap; }
+tr:last-child td { border-bottom: none; }
+
+/* ── LIST ── */
+ul.plain { list-style: none; padding: 0; display: flex; flex-direction: column; gap: 0.5rem; }
+ul.plain li { display: flex; gap: 0.75rem; }
+ul.plain li::before { content: '—'; color: var(--fg3); flex-shrink: 0; }
+
+/* ── PIPELINE ── */
+.pipeline { display: flex; flex-direction: column; gap: 0; }
+.pipe-row {
+  display: flex;
+  align-items: baseline;
+  gap: 1rem;
+  padding: 0.45rem 0;
+  border-bottom: 1px solid var(--line);
+}
+.pipe-row:first-child { border-top: 1px solid var(--line); }
+.pipe-n {
+  font-size: clamp(0.6rem, 0.9vw, 0.7rem);
+  color: var(--fg3);
+  width: 1.2rem;
+  flex-shrink: 0;
+  font-variant-numeric: tabular-nums;
+}
+.pipe-text { font-size: clamp(0.72rem, 1.3vw, 0.88rem); color: var(--fg2); }
+.pipe-text .em { font-weight: 500; }
+
+/* ── ENDPOINT ── */
+.ep { display: flex; gap: 0.75rem; align-items: baseline; padding: 0.5rem 0; border-bottom: 1px solid var(--line); }
+.ep:first-child { border-top: 1px solid var(--line); }
+.method {
+  font-size: clamp(0.55rem, 0.9vw, 0.65rem);
+  letter-spacing: 0.08em;
+  font-weight: 600;
+  color: var(--fg3);
+  width: 2.2rem;
+  flex-shrink: 0;
+}
+.ep-path { font-size: clamp(0.72rem, 1.3vw, 0.88rem); color: var(--fg); font-weight: 500; margin-right: 0.75rem; }
+.ep-desc { font-size: clamp(0.68rem, 1.2vw, 0.82rem); color: var(--fg2); }
+
+/* ── TAG ── */
+.tag {
+  display: inline-block;
+  font-size: clamp(0.58rem, 0.9vw, 0.68rem);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 0.2em 0.6em;
+  border: 1px solid var(--fg3);
+  color: var(--fg2);
+}
+.tag.green { border-color: var(--accent); color: var(--accent); }
+
+/* ── STAT ── */
+.stat { }
+.stat-n {
+  font-size: clamp(2rem, 5vw, 4rem);
+  font-weight: 200;
+  letter-spacing: -0.04em;
+  color: var(--fg);
+  line-height: 1;
+}
+.stat-l {
+  font-size: clamp(0.6rem, 1vw, 0.72rem);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--fg3);
+  margin-top: 0.25rem;
+}
+
+/* ── PHASE MARKER ── */
+.phase-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: clamp(1.5rem, 3vw, 2.5rem);
+}
+.phase-bar .label { margin: 0; }
+.ph-line { flex: 1; height: 1px; background: var(--line); }
+
+/* ── PROGRESS & NAV ── */
+.progress {
+  position: fixed;
+  top: 0; left: 0;
+  height: 1px;
+  background: var(--accent);
+  transition: width 0.35s ease;
+  z-index: 100;
+}
+
+.nav {
+  position: fixed;
+  bottom: 1.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 0.375rem;
+  z-index: 100;
+}
+.dot {
+  width: 5px; height: 5px;
+  border-radius: 50%;
+  background: var(--fg3);
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  transition: background 0.2s, transform 0.2s;
+}
+.dot.on { background: var(--fg2); transform: scale(1.4); }
+
+.counter {
+  position: fixed;
+  bottom: 1.5rem;
+  right: clamp(1.5rem, 4vw, 3rem);
+  font-size: 0.65rem;
+  color: var(--fg3);
+  letter-spacing: 0.08em;
+  font-variant-numeric: tabular-nums;
+  z-index: 100;
+}
+</style>
+</head>
+<body>
+
+<div class="progress" id="prog"></div>
+<nav class="nav" id="nav"></nav>
+<div class="counter" id="ctr"></div>
+
+<!-- ── 01 NASLOVNICA ── -->
+<section class="slide" id="s0">
+  <div class="label r">FOI Varaždin — 2026</div>
+  <h1 class="r">Chatbot za<br>kućnu<br><span class="ac">fermentaciju</span></h1>
+  <hr class="r">
+  <p class="r" style="max-width:38ch;">
+    Lokalni RAG sustav za odgovaranje na pitanja o fermentaciji — bez cloud servisa, bez API ključeva, na hrvatskom jeziku.
+  </p>
+  <div class="r" style="margin-top: clamp(1.5rem, 3vw, 2rem); display:flex; gap:0.75rem; flex-wrap:wrap;">
+    <span class="tag">Faza 1 — Planiranje</span>
+    <span class="tag green">Faza 2 — RAG implementacija</span>
+  </div>
+  <div class="r" style="margin-top: clamp(2rem, 4vw, 3.5rem);">
+    <p style="color: var(--fg3); font-size: clamp(0.65rem, 1vw, 0.75rem); letter-spacing: 0.08em;">
+      Robert Domgjonaj &nbsp;&nbsp; Mihael Baivić &nbsp;&nbsp; Matej Čiček
+    </p>
+  </div>
+</section>
+
+<!-- ── 02 PREGLED ── -->
+<section class="slide" id="s1">
+  <div class="label r">Pregled projekta</div>
+  <h2 class="r">Što je cilj?</h2>
+  <hr class="r">
+  <div class="cols cols-3 r" style="margin-top: clamp(1.5rem, 3vw, 2rem);">
+    <div>
+      <h3>Domena</h3>
+      <p>Chatbot odgovara isključivo na pitanja o kućnoj fermentaciji. Sva ostala pitanja odbija.</p>
+    </div>
+    <div>
+      <h3>Arhitektura</h3>
+      <p>RAG — model odgovara samo temeljem verificiranog sadržaja iz baze dokumenata. Nema halucinacija.</p>
+    </div>
+    <div>
+      <h3>Lokalno</h3>
+      <p>Niti jedan upit ne napušta lokalni sustav. Nema plaćanja, nema cloud ovisnosti.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ── 03 FAZA 1 naslovna ── -->
+<section class="slide" id="s2">
+  <div class="phase-bar r">
+    <span class="label" style="margin:0; color: var(--fg2);">01</span>
+    <div class="ph-line"></div>
+  </div>
+  <h2 class="r" style="font-size: clamp(3rem, 8vw, 7rem); font-weight:200; letter-spacing:-0.04em;">Faza 1</h2>
+  <p class="r" style="margin-top:0.75rem; font-size: clamp(1rem, 2.5vw, 1.5rem); color:var(--fg2);">Planiranje i definicija zahtjeva</p>
+  <hr class="r">
+  <div class="cols cols-3 r" style="margin-top: clamp(1rem, 2vw, 1.5rem);">
+    <p>Definicija domene i opsega chatbota</p>
+    <p>Analiza ciljanih korisnika</p>
+    <p>Popis zahtjeva znanjske baze</p>
+  </div>
+</section>
+
+<!-- ── 04 FAZA 1: domena ── -->
+<section class="slide" id="s3">
+  <div class="label r">Faza 1 — Domena</div>
+  <h2 class="r">Korisnici i pravila</h2>
+  <hr class="r">
+  <div class="cols cols-21 r" style="margin-top: clamp(1.5rem, 3vw, 2rem);">
+    <div>
+      <h3 style="margin-bottom:0.75rem;">Ciljani korisnici</h3>
+      <ul class="plain">
+        <li>Početnici koji žele naučiti osnove fermentacije bez stručnog žargona</li>
+        <li>Entuzijasti koji traže recepte i savjete za konkretne procese</li>
+        <li>Korisnici koji trebaju dijagnosticirati problem ili prepoznati kvarenje</li>
+      </ul>
+    </div>
+    <div>
+      <h3 style="margin-bottom:0.75rem;">Pravila chatbota</h3>
+      <ul class="plain">
+        <li>Odgovara samo unutar domene fermentacije</li>
+        <li>Naglašava sigurnosna upozorenja</li>
+        <li>Prikazuje izvore odgovora</li>
+        <li>Jezik: isključivo hrvatski</li>
+        <li>Odbija pitanja izvan domene</li>
+        <li>Ne generira odgovore bez izvora</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ── 05 FAZA 1: baza znanja ── -->
+<section class="slide" id="s4">
+  <div class="label r">Faza 1 — Znanjska baza</div>
+  <h2 class="r">Područja fermentacije</h2>
+  <hr class="r">
+  <div class="cols cols-2 r" style="margin-top: clamp(1.5rem, 3vw, 2rem);">
+    <div>
+      <table>
+        <thead><tr><th>Tema</th><th>Opis</th></tr></thead>
+        <tbody>
+          <tr><td>Fermentacija povrća</td><td>Kiseli kupus, kimchi — lakto-fermentacija, pH kontrola</td></tr>
+          <tr><td>Mliječna fermentacija</td><td>Kefir, jogurt — bakterijske kulture, temperatura</td></tr>
+          <tr><td>Kombucha</td><td>SCOBY kultura, fermentacija čaja, sigurnost</td></tr>
+          <tr><td>Kiselo tijesto</td><td>Starter kultura, hidratacija, pečenje</td></tr>
+          <tr><td>Oprema i higijena</td><td>Posude, alati, sterilizacija</td></tr>
+          <tr><td>Sigurnost i kvarenje</td><td>Prepoznavanje plijesni, toksini, rizici</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div>
+      <h3 style="margin-bottom:0.75rem;">Struktura dokumenata</h3>
+      <p style="margin-bottom:1rem;">12 Markdown datoteka u <span class="em">/docs/</span> mapi. Svaka pokriva jednu temu, s YAML frontmatterom (naslov, tagovi, tip izvora) i korak-po-korak vodičima.</p>
+      <p>Ukupno: vodiči, primjeri pitanja i odgovora, pravila odgovaranja chatbota i opis RAG podataka.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ── 06 FAZA 2 naslovna ── -->
+<section class="slide" id="s5">
+  <div class="phase-bar r">
+    <span class="label" style="margin:0; color: var(--fg2);">02</span>
+    <div class="ph-line"></div>
+  </div>
+  <h2 class="r" style="font-size: clamp(3rem, 8vw, 7rem); font-weight:200; letter-spacing:-0.04em;">Faza 2</h2>
+  <p class="r" style="margin-top:0.75rem; font-size: clamp(1rem, 2.5vw, 1.5rem); color:var(--fg2);">RAG pipeline — lokalna implementacija</p>
+  <hr class="r">
+  <div class="cols cols-3 r" style="margin-top: clamp(1rem, 2vw, 1.5rem);">
+    <p>Ingestion: chunking i vektorizacija dokumenata</p>
+    <p>Retrieval: ChromaDB similarity search</p>
+    <p>Generation: Ollama LLM na hrvatskom</p>
+  </div>
+</section>
+
+<!-- ── 07 TEHNIČKI STACK ── -->
+<section class="slide" id="s6">
+  <div class="label r">Faza 2 — Tehnologija</div>
+  <h2 class="r">Tehnički stack</h2>
+  <hr class="r">
+  <div class="cols cols-2 r" style="margin-top: clamp(1.5rem, 3vw, 2rem);">
+    <table>
+      <thead><tr><th>Komponenta</th><th>Tehnologija</th></tr></thead>
+      <tbody>
+        <tr><td>Lokalni LLM</td><td>Ollama + OpenEuroLLM-Croatian</td></tr>
+        <tr><td>Embeddings</td><td>paraphrase-multilingual-MiniLM-L12-v2</td></tr>
+        <tr><td>Vektorska baza</td><td>ChromaDB — lokalna, perzistentna</td></tr>
+        <tr><td>Backend</td><td>Flask 3.0 — port 3000</td></tr>
+        <tr><td>Frontend</td><td>HTML / CSS / JavaScript</td></tr>
+        <tr><td>Chunking</td><td>Markdown naslovi — ~600 znakova, 80 overlap</td></tr>
+      </tbody>
+    </table>
+    <div>
+      <h3 style="margin-bottom:0.75rem;">Zašto OpenEuroLLM Croatian?</h3>
+      <ul class="plain" style="margin-bottom:1.5rem;">
+        <li>Nativna kvaliteta hrvatskog jezika</li>
+        <li>Lokalno izvršavanje bez cloud API-ja</li>
+        <li>Jednostavna Ollama integracija</li>
+      </ul>
+      <h3 style="margin-bottom:0.75rem;">Zašto MiniLM-L12-v2?</h3>
+      <ul class="plain">
+        <li>Višejezičan model — dobro radi s hrvatskim</li>
+        <li>Mali i brz za lokalni rad</li>
+        <li>Isti model u ingest-u i retrieval-u</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ── 08 RAG PIPELINE ── -->
+<section class="slide" id="s7">
+  <div class="label r">Faza 2 — Arhitektura</div>
+  <h2 class="r">RAG pipeline</h2>
+  <hr class="r">
+  <div class="cols cols-2 r" style="margin-top: clamp(1.5rem, 3vw, 2rem);">
+    <div>
+      <p style="font-size:0.65rem; letter-spacing:0.12em; text-transform:uppercase; color:var(--fg3); margin-bottom:0.5rem;">Priprema — ingest.py</p>
+      <div class="pipeline">
+        <div class="pipe-row"><span class="pipe-n">1</span><span class="pipe-text">Učitaj MD datoteke iz <span class="em">/docs/</span></span></div>
+        <div class="pipe-row"><span class="pipe-n">2</span><span class="pipe-text">Parsiraj YAML frontmatter (title, tags, tip)</span></div>
+        <div class="pipe-row"><span class="pipe-n">3</span><span class="pipe-text">Split teksta po Markdown naslovima</span></div>
+        <div class="pipe-row"><span class="pipe-n">4</span><span class="pipe-text">Vektorizacija — SentenceTransformer</span></div>
+        <div class="pipe-row"><span class="pipe-n">5</span><span class="pipe-text">Pohrana u <span class="em">ChromaDB</span> s metapodacima</span></div>
+      </div>
+    </div>
+    <div>
+      <p style="font-size:0.65rem; letter-spacing:0.12em; text-transform:uppercase; color:var(--fg3); margin-bottom:0.5rem;">Upit korisnika — app.py</p>
+      <div class="pipeline">
+        <div class="pipe-row"><span class="pipe-n">6</span><span class="pipe-text">Korisnik pošalje pitanje iz browsera</span></div>
+        <div class="pipe-row"><span class="pipe-n">7</span><span class="pipe-text">Embedding upita — isti model kao ingest</span></div>
+        <div class="pipe-row"><span class="pipe-n">8</span><span class="pipe-text">ChromaDB similarity search — <span class="em">top-4 chunkova</span></span></div>
+        <div class="pipe-row"><span class="pipe-n">9</span><span class="pipe-text">Prompt = sistemske upute + kontekst + upit</span></div>
+        <div class="pipe-row"><span class="pipe-n">10</span><span class="pipe-text">Ollama generira odgovor — Flask vraća + izvore</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── 09 API ── -->
+<section class="slide" id="s8">
+  <div class="label r">Faza 2 — API</div>
+  <h2 class="r">Endpointi</h2>
+  <hr class="r">
+  <div class="r" style="margin-top: clamp(1.5rem, 3vw, 2rem); max-width: 680px;">
+    <div class="ep"><span class="method">POST</span><span class="ep-path">/chat</span><span class="ep-desc">Odgovor LLM-a i relevantni izvori za dano pitanje</span></div>
+    <div class="ep"><span class="method">POST</span><span class="ep-path">/chat/stream</span><span class="ep-desc">Streaming odgovor token-po-token za real-time prikaz</span></div>
+    <div class="ep"><span class="method">POST</span><span class="ep-path">/retrieve</span><span class="ep-desc">Debug mod — samo retrieval, bez poziva LLM-a</span></div>
+    <div class="ep"><span class="method">GET</span><span class="ep-path">/health</span><span class="ep-desc">Status servisa i ChromaDB konekcije</span></div>
+  </div>
+</section>
+
+<!-- ── 10 ZAŠTO LOKALNO ── -->
+<section class="slide" id="s9">
+  <div class="label r">Faza 2 — Obrazloženje</div>
+  <h2 class="r">Zašto potpuno lokalno?</h2>
+  <hr class="r">
+  <div class="cols cols-2 r" style="margin-top: clamp(1.5rem, 3vw, 2rem);">
+    <div>
+      <h3>Privatnost</h3>
+      <p style="margin-bottom:1.5rem;">Niti jedan upit ne napušta lokalni sustav. Idealno za osjetljive primjene i demonstracije.</p>
+      <h3>Troškovi</h3>
+      <p>Nema API ključeva, nema plaćanja po upitu. Neograničeno korištenje bez financijskog ograničenja.</p>
+    </div>
+    <div>
+      <h3>Dostupnost</h3>
+      <p style="margin-bottom:1.5rem;">Radi bez internetske veze. Jednom postavljeno, uvijek dostupno — nema ovisnosti o cloud servisu.</p>
+      <h3>Transparentnost</h3>
+      <p>Sve komponente su vidljive i izmjenjive. Savršeno za demonstraciju i razumijevanje RAG arhitekture.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ── 11 STATISTIKE ── -->
+<section class="slide" id="s10">
+  <div class="label r">Projekt u brojevima</div>
+  <h2 class="r">Statistike</h2>
+  <hr class="r">
+  <div class="cols cols-3 r" style="margin-top: clamp(1.5rem, 3vw, 2rem);">
+    <div class="stat"><div class="stat-n">12</div><div class="stat-l">Markdown dokumenata</div></div>
+    <div class="stat"><div class="stat-n">600</div><div class="stat-l">znakova po chunku</div></div>
+    <div class="stat"><div class="stat-n">Top 4</div><div class="stat-l">chunkova po upitu</div></div>
+  </div>
+  <hr class="r" style="margin-top: clamp(1.5rem, 3vw, 2.5rem);">
+  <div class="cols cols-3 r">
+    <div>
+      <p class="em" style="margin-bottom:0.3rem;">Faza 1</p>
+      <p>Planiranje, analiza domene, definicija zahtjeva i pravila chatbota</p>
+    </div>
+    <div>
+      <p class="em" style="margin-bottom:0.3rem;">Faza 2A</p>
+      <p>Izgradnja znanjske baze — 12 datoteka pokrivaju sve domene fermentacije</p>
+    </div>
+    <div>
+      <p class="em" style="margin-bottom:0.3rem;">Faza 2B</p>
+      <p>Implementacija RAG-a: ingest, retrieval, LLM integracija i web sučelje</p>
+    </div>
+  </div>
+</section>
+
+<!-- ── 12 KRAJ ── -->
+<section class="slide" id="s11">
+  <div class="label r">Hvala na pažnji</div>
+  <h2 class="r" style="font-size: clamp(3rem, 8vw, 7rem); font-weight:200; letter-spacing:-0.04em;">Pitanja?</h2>
+  <hr class="r">
+  <p class="r" style="max-width:42ch; margin-top:0.5rem;">
+    Chatbot za kućnu fermentaciju — lokalni RAG sustav izgrađen s Ollama, ChromaDB i Flask-om.
+  </p>
+  <div class="r" style="margin-top: clamp(2rem, 4vw, 3.5rem);">
+    <p style="color: var(--fg3); font-size: clamp(0.65rem, 1vw, 0.75rem); letter-spacing: 0.08em; margin-bottom:0.4rem;">
+      Robert Domgjonaj &nbsp;&nbsp; Mihael Baivić &nbsp;&nbsp; Matej Čiček
+    </p>
+    <p style="color: var(--fg3); font-size: clamp(0.6rem, 0.9vw, 0.7rem); letter-spacing: 0.06em;">
+      Fakultet organizacije i informatike, Varaždin &nbsp;&nbsp; 2026
+    </p>
+  </div>
+</section>
+
+<script>
+const TOTAL = 12;
+let cur = 0, busy = false;
+
+const slides = [...document.querySelectorAll('.slide')];
+const nav    = document.getElementById('nav');
+const prog   = document.getElementById('prog');
+const ctr    = document.getElementById('ctr');
+
+/* build dots */
+slides.forEach((_, i) => {
+  const b = document.createElement('button');
+  b.className = 'dot' + (i === 0 ? ' on' : '');
+  b.setAttribute('aria-label', `Slide ${i + 1}`);
+  b.onclick = () => go(i);
+  nav.appendChild(b);
+});
+
+function ui() {
+  prog.style.width = ((cur + 1) / TOTAL * 100) + '%';
+  ctr.textContent  = `${cur + 1} / ${TOTAL}`;
+  document.querySelectorAll('.dot').forEach((d, i) => d.classList.toggle('on', i === cur));
+}
+
+function reveal(el) {
+  el.querySelectorAll('.r').forEach(r => { r.classList.remove('on'); });
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    el.querySelectorAll('.r').forEach(r => r.classList.add('on'));
+  }));
+}
+
+function go(idx) {
+  if (idx === cur || busy || idx < 0 || idx >= TOTAL) return;
+  busy = true;
+  slides[cur].classList.remove('active');
+  cur = idx;
+  ui();
+  const s = slides[cur];
+  s.classList.add('active');
+  setTimeout(() => { busy = false; reveal(s); }, 420);
+}
+
+document.addEventListener('keydown', e => {
+  if (['ArrowRight','ArrowDown',' '].includes(e.key)) { e.preventDefault(); go(cur + 1); }
+  if (['ArrowLeft','ArrowUp'].includes(e.key))         { e.preventDefault(); go(cur - 1); }
+  if (e.key === 'Home') { e.preventDefault(); go(0); }
+  if (e.key === 'End')  { e.preventDefault(); go(TOTAL - 1); }
+});
+
+let tx = 0;
+document.addEventListener('touchstart', e => { tx = e.changedTouches[0].clientX; }, { passive: true });
+document.addEventListener('touchend',   e => {
+  const dx = e.changedTouches[0].clientX - tx;
+  if (Math.abs(dx) > 50) dx < 0 ? go(cur + 1) : go(cur - 1);
+});
+
+ui();
+slides[0].classList.add('active');
+reveal(slides[0]);
+</script>
+</body>
+</html>
